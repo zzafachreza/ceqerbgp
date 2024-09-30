@@ -161,7 +161,7 @@ export default function Register({ navigation, route }) {
                             }} />
                         </View>
                         {/* Nama Orang Tua/Wali */}
-                        <MyInput iconname='person' value={kirim.nama_lengkap} onChangeText={value => setKirim({ ...kirim, 'nama_lengkap': value })} label="Nama Lengkap" placeholder="Masukana nama lengkap" />
+                        <MyInput iconname='person' value={kirim.nama_lengkap} onChangeText={value => setKirim({ ...kirim, 'nama_lengkap': value })} label="Nama Lengkap" placeholder="Masukan nama lengkap" />
                         <MyGap jarak={20} />
 
                         {/* username*/}

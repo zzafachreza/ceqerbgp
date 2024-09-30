@@ -159,7 +159,7 @@ export default function Add({ navigation, route }) {
                 <MyGap jarak={20} />
 
                 <View>
-                    <MyInput keyboardType='number-pad' label="Volume Bak Truk Normal" placeholder="Masukan Volume Bak Truk Normal" value={kirim.volume_normal} onChangeText={x => setKirim({ ...kirim, volume_normal: x })} iconname="file-tray" />
+                    <MyInput keyboardType='number-pad' label="Volume Bak Truk Normal" placeholder="Isi Volume Normal" value={kirim.volume_normal} onChangeText={x => setKirim({ ...kirim, volume_normal: x })} iconname="file-tray" />
                     <View style={{
                         right: 10,
                         top: 42,
@@ -188,7 +188,7 @@ export default function Add({ navigation, route }) {
 
 
                 <View>
-                    <MyInput keyboardType='number-pad' label="Volume Bak Truk Tambahan" placeholder="Masukan Volume Bak Truk Tambahan" value={kirim.volume_tambahan} onChangeText={x => setKirim({ ...kirim, volume_tambahan: x })} iconname="file-tray-stacked" />
+                    <MyInput keyboardType='number-pad' label="Volume Bak Truk Tambahan" placeholder="Isi Volume Normal" value={kirim.volume_tambahan} onChangeText={x => setKirim({ ...kirim, volume_tambahan: x })} iconname="file-tray-stacked" />
                     <View style={{
                         right: 10,
                         top: 42,

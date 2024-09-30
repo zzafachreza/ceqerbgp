@@ -71,7 +71,7 @@ export default function Detail({ navigation, route }) {
                     }}>{moment(item.tanggal).format('DD MMMM YYYY')}</Text>
 
                     <Mylist label="Nama Supplier" value={item.nama_supplier} />
-                    <Mylist label="Plat Nomor Kendaraan" value={item.nama_supplier} />
+                    <Mylist label="Plat Nomor Kendaraan" value={item.plat_nomor} />
                     <Mylist label="Volume Bak Truk Normal" satuan value={item.volume_normal} />
                     <Mylist label="Volume Bak Truk Tambahan" satuan value={item.volume_tambahan} />
                     <Mylist label="Jenis Material" value={item.jenis_material} />
