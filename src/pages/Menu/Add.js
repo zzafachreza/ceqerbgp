@@ -188,7 +188,7 @@ export default function Add({ navigation, route }) {
 
 
                 <View>
-                    <MyInput keyboardType='number-pad' label="Volume Bak Truk Tambahan" placeholder="Isi Volume Normal" value={kirim.volume_tambahan} onChangeText={x => setKirim({ ...kirim, volume_tambahan: x })} iconname="file-tray-stacked" />
+                    <MyInput keyboardType='number-pad' label="Volume Bak Truk Tambahan" placeholder="Isi Volume Tambahan" value={kirim.volume_tambahan} onChangeText={x => setKirim({ ...kirim, volume_tambahan: x })} iconname="file-tray-stacked" />
                     <View style={{
                         right: 10,
                         top: 42,
