@@ -11,6 +11,7 @@ import {
     TouchableWithoutFeedback,
     PermissionsAndroid,
     ScrollView,
+    FlatList,
 } from 'react-native';
 import { windowWidth, fonts } from '../../utils/fonts';
 import { apiURL, getData, MYAPP, storeData, urlAPI, urlApp, urlAvatar } from '../../utils/localStorage';
@@ -25,10 +26,11 @@ import moment from 'moment';
 import SweetAlert from 'react-native-sweet-alert';
 import MyLoading from '../../components/MyLoading';
 import GetLocation from 'react-native-get-location'
+import { showMessage } from 'react-native-flash-message';
 
 export default function Edit({ navigation, route }) {
 
-
+    const [comp, setComp] = useState({})
     const [kirim, setKirim] = useState(route.params);
     const [loading, setLoading] = useState(false);
     const sendServer = () => {
@@ -49,7 +51,8 @@ export default function Edit({ navigation, route }) {
                 },
                     callback => {
                         // navigation.replace('MainApp');
-                        navigation.goBack();
+                        // navigation.goBack();
+                        Linking.openURL('https://wa.me/' + comp.tlp + '?text=' + res.data.link)
                     });
 
 
@@ -121,13 +124,147 @@ export default function Edit({ navigation, route }) {
         }
     };
 
+    const [cek, setCek] = useState({
+        plat_nomor: 0,
+        nama_supplier: 0,
+        jenis_kendaraan: 0,
+        panjang: 0,
+        lebar: 0,
+        tinggi: 0,
+        fl: 0,
+    });
+
+    const cekData = () => {
+        console.log(kirim.plat_nomor.length)
+        if (kirim.plat_nomor.length == 0) {
+            setCek({ ...cek, plat_nomor: 1 })
+        } else if (cek.plat_nomor > 0) {
+            setCek({ ...cek, plat_nomor: 0 })
+        } else if (kirim.nama_supplier.length == 0) {
+            setCek({ ...cek, nama_supplier: 1 })
+        } else if (cek.nama_supplier > 0) {
+            setCek({ ...cek, nama_supplier: 0 })
+        } else if (kirim.jenis_kendaraan.length == 0) {
+            setCek({ ...cek, jenis_kendaraan: 1 })
+        } else if (cek.jenis_kendaraan > 0) {
+            setCek({ ...cek, jenis_kendaraan: 0 })
+        } else if (kirim.panjang.length == 0) {
+            setCek({ ...cek, panjang: 1 })
+        } else if (cek.panjang > 0) {
+            setCek({ ...cek, panjang: 0 })
+        } else if (kirim.lebar.length == 0) {
+            setCek({ ...cek, lebar: 1 })
+        } else if (cek.lebar > 0) {
+            setCek({ ...cek, lebar: 0 })
+        } else if (kirim.tinggi.length == 0) {
+            setCek({ ...cek, tinggi: 1 })
+        } else if (cek.tinggi > 0) {
+            setCek({ ...cek, tinggi: 0 })
+        } else if (kirim.fl.length == 0) {
+            setCek({ ...cek, fl: 1 })
+        } else if (cek.fl > 0) {
+            setCek({ ...cek, fl: 0 })
+        } else {
+            console.log({
+                ...kirim,
+                volume: ((parseFloat(kirim.panjang) * parseFloat(kirim.lebar) * parseFloat(kirim.tinggi)) + parseFloat(kirim.pa)) + parseFloat(kirim.fl)
+            })
+            setKirim({
+                ...kirim,
+                volume: ((parseFloat(kirim.panjang) * parseFloat(kirim.lebar) * parseFloat(kirim.tinggi)) + parseFloat(kirim.pa)) + parseFloat(kirim.fl)
+            });
+            showMessage({
+                message: 'Data input sudah sesuai',
+                icon: 'success',
+                type: 'success'
+            })
+        }
+    }
+
+
+    const CariData = ({ tipe = 'Plat' }) => {
+        return (
+            <TouchableWithoutFeedback onPress={() => {
+
+                if (tipe == 'Plat') {
+                    setBuka({
+                        ...buka,
+                        plat: true
+                    })
+                } else {
+                    setBuka({
+                        ...buka,
+                        supplier: true
+                    })
+                }
+            }}>
+                <View style={{
+                    right: 0,
+                    top: 32,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: 50,
+                    position: 'absolute',
+                    height: 50,
+                }}>
+                    <Icon type='ionicon' name='search' color={colors.primary} />
+                </View>
+            </TouchableWithoutFeedback>
+        )
+    }
+    const [dataPlat, setDataPlat] = useState([]);
+    const [dataSupplier, setDataSuppplier] = useState([]);
+
+    const __getTransaction = () => {
+        axios.post(apiURL + 'database').then(res => {
+            console.log(res.data.plat);
+            setDataPlat(res.data.plat);
+            setDataSuppplier(res.data.supplier);
+        })
+    }
+
+    const [buka, setBuka] = useState({
+        plat: false,
+        supplier: false
+    })
 
 
     useEffect(() => {
+        __getTransaction();
         requestCameraPermission();
         requestLocationPermission();
+        axios.post(apiURL + 'company').then(res => {
+            console.log(res.data.data);
+            setComp(res.data.data);
+        })
+    }, []);
 
-    }, [])
+    const Simeter = ({ pangkat = '' }) => {
+        return (
+            <View style={{
+                right: 10,
+                top: 42,
+                position: 'absolute',
+                flexDirection: 'row'
+            }}>
+                <Text style={{
+                    fontFamily: fonts.secondary[600],
+                    fontSize: 20,
+                    lineHeight: 26,
+                    color: colors.primary
+                }}> m
+
+                </Text>
+                <Text style={{
+                    fontFamily: fonts.secondary[600],
+                    fontSize: 15,
+                    lineHeight: 20,
+                    color: colors.primary
+                }}>{pangkat}</Text>
+            </View>
+        )
+    }
+
 
     return (
         <SafeAreaView style={{
@@ -143,69 +280,158 @@ export default function Edit({ navigation, route }) {
 
 
 
-                <MyInput label="Nama Supplier" placeholder="Masukan Nama Supplier" value={kirim.nama_supplier} onChangeText={x => setKirim({ ...kirim, nama_supplier: x })} iconname="person" />
-                <MyGap jarak={20} />
-
-                <MyInput label="Plat Nomor Kendaraan" placeholder="Masukan Plat Nomor Kendaraan" value={kirim.plat_nomor} onChangeText={x => setKirim({ ...kirim, plat_nomor: x })} iconname="card" />
-
-                <MyGap jarak={20} />
-
                 <View>
-                    <MyInput label="Volume Bak Truk Normal" placeholder="Masukan Volume Bak Truk Normal" value={kirim.volume_normal} onChangeText={x => setKirim({ ...kirim, volume_normal: x })} iconname="file-tray" />
-                    <View style={{
-                        right: 10,
-                        top: 42,
-                        position: 'absolute',
-                        flexDirection: 'row'
-                    }}>
-                        <Text style={{
-                            fontFamily: fonts.secondary[600],
-                            fontSize: 20,
-                            lineHeight: 26,
-                            color: colors.primary
-                        }}> cm
-
-                        </Text>
-                        <Text style={{
-                            fontFamily: fonts.secondary[600],
-                            fontSize: 15,
-                            lineHeight: 20,
-                            color: colors.primary
-                        }}>3</Text>
-                    </View>
-
-                </View>
-
-                <MyGap jarak={20} />
+                    <MyInput colorIcon={parseFloat(cek.plat_nomor) > 0 ? colors.danger : Color.blueGray[300]} label="Plat Nomor Kendaraan" placeholder="Masukan Plat Nomor Kendaraan" value={kirim.plat_nomor} onChangeText={x => setKirim({ ...kirim, plat_nomor: x })} iconname="card" />
+                    <CariData tipe='Plat' />
 
 
-                <View>
-                    <MyInput label="Volume Bak Truk Tambahan" placeholder="Masukan Volume Bak Truk Tambahan" value={kirim.volume_tambahan} onChangeText={x => setKirim({ ...kirim, volume_tambahan: x })} iconname="file-tray-stacked" />
-                    <View style={{
-                        right: 10,
-                        top: 42,
-                        position: 'absolute',
-                        flexDirection: 'row'
-                    }}>
-                        <Text style={{
-                            fontFamily: fonts.secondary[600],
-                            fontSize: 20,
-                            lineHeight: 26,
-                            color: colors.primary
-                        }}> cm
 
-                        </Text>
-                        <Text style={{
-                            fontFamily: fonts.secondary[600],
-                            fontSize: 15,
-                            lineHeight: 20,
-                            color: colors.primary
-                        }}>3</Text>
-                    </View>
+                    {buka.plat &&
+                        <View style={{
+                            backgroundColor: colors.white,
+                            marginTop: 10,
+                            borderRadius: 12,
+                            padding: 10,
+                        }}>
+                            <TouchableOpacity onPress={() => setBuka({ ...buka, plat: false })} style={{
+                                justifyContent: 'center',
+                                alignItems: 'flex-end'
+                            }}>
+                                <Icon type='ionicon' name='close-circle' size={30} />
+                            </TouchableOpacity>
+                            <FlatList data={dataPlat} renderItem={({ item }) => {
+                                return (
+                                    <TouchableOpacity onPress={() => setKirim({ ...kirim, plat_nomor: item.plat_nomor })} style={{
+                                        padding: 10,
+                                        marginBottom: 5,
+                                        borderBottomWidth: 1,
+                                        borderBottomColor: Color.blueGray[300]
+                                    }}>
+                                        <Text style={{
+                                            ...fonts.headline4
+                                        }}>{item.plat_nomor}</Text>
+                                    </TouchableOpacity>
+                                )
+                            }} />
+                        </View>
+                    }
                 </View>
                 <MyGap jarak={20} />
 
-                <MyInput label="Jenis Material" placeholder="Masukan Jenis Material" value={kirim.jenis_material} onChangeText={x => setKirim({ ...kirim, jenis_material: x })} iconname="options" />
+                <View>
+
+                    <MyInput colorIcon={cek.nama_supplier > 0 ? colors.danger : Color.blueGray[300]} label="Nama Supplier" placeholder="Masukan Nama Supplier" value={kirim.nama_supplier} onChangeText={x => setKirim({ ...kirim, nama_supplier: x })} iconname="person" />
+                    <CariData tipe='Supplier' />
+                    {buka.supplier &&
+                        <View style={{
+                            backgroundColor: colors.white,
+                            marginTop: 10,
+                            borderRadius: 12,
+                            padding: 10,
+                        }}>
+                            <TouchableOpacity onPress={() => setBuka({ ...buka, supplier: false })} style={{
+                                justifyContent: 'center',
+                                alignItems: 'flex-end'
+                            }}>
+                                <Icon type='ionicon' name='close-circle' size={30} />
+                            </TouchableOpacity>
+                            <FlatList data={dataSupplier} renderItem={({ item }) => {
+                                return (
+                                    <TouchableOpacity onPress={() => setKirim({ ...kirim, nama_supplier: item.nama_supplier })} style={{
+                                        padding: 10,
+                                        marginBottom: 5,
+                                        borderBottomWidth: 1,
+                                        borderBottomColor: Color.blueGray[300]
+                                    }}>
+                                        <Text style={{
+                                            ...fonts.headline4
+                                        }}>{item.nama_supplier}</Text>
+                                    </TouchableOpacity>
+                                )
+                            }} />
+                        </View>
+                    }
+                </View>
+                <MyGap jarak={20} />
+                <MyInput colorIcon={cek.jenis_kendaraan > 0 ? colors.danger : Color.blueGray[300]} label="Jenis Kendaraan" placeholder="Masukan Jenis Kendaraan" value={kirim.jenis_kendaraan} onChangeText={x => setKirim({ ...kirim, jenis_kendaraan: x })} iconname="hardware-chip-outline" />
+                <MyGap jarak={20} />
+                <MyInput label="Jenis Muatan" placeholder="Masukan Jenis Muatan" value={kirim.jenis_muatan} onChangeText={x => setKirim({ ...kirim, jenis_muatan: x })} iconname="server" />
+                <MyGap jarak={20} />
+
+
+                <View style={{
+                    marginBottom: 20,
+                }}>
+                    <MyInput colorIcon={cek.panjang > 0 ? colors.danger : Color.blueGray[300]} keyboardType='number-pad' label="Panjang" placeholder="Masukan Panjang" value={kirim.panjang} onChangeText={x => setKirim({ ...kirim, panjang: x })} iconname="options" />
+                    <Simeter />
+                </View>
+                <View style={{
+                    marginBottom: 20,
+                }}>
+                    <MyInput colorIcon={cek.lebar > 0 ? colors.danger : Color.blueGray[300]} keyboardType='number-pad' label="Lebar" placeholder="Masukan Lebar" value={kirim.lebar} onChangeText={x => setKirim({ ...kirim, lebar: x })} iconname="expand" />
+                    <Simeter />
+                </View>
+                <View style={{
+                    marginBottom: 20,
+                }}>
+                    <MyInput colorIcon={cek.tinggi > 0 ? colors.danger : Color.blueGray[300]} keyboardType='number-pad' label="Tinggi" placeholder="Masukan Tinggi" value={kirim.tinggi} onChangeText={x => setKirim({ ...kirim, tinggi: x })} iconname="swap-vertical" />
+                    <Simeter />
+                </View>
+
+                <MyInput label="Pa" keyboardType='number-pad' placeholder="Masukan Pa" value={kirim.pa} onChangeText={x => setKirim({ ...kirim, pa: x })} iconname="copy" />
+                <MyGap jarak={20} />
+                <MyInput colorIcon={cek.fl > 0 ? colors.danger : Color.blueGray[300]} label="Fl" keyboardType='number-pad' placeholder="Masukan Fl" value={kirim.fl} onChangeText={x => setKirim({ ...kirim, fl: x })} iconname="file-tray-full" />
+                <MyGap jarak={20} />
+                {kirim.volume > 0 &&
+
+                    <View style={{
+                        marginBottom: 20,
+                    }}>
+                        <Text style={{
+                            ...fonts.body3,
+                            color: colors.white,
+                            marginBottom: 5,
+                        }}>Volume</Text>
+                        <View style={{
+                            height: 50,
+                            backgroundColor: colors.white,
+                            borderRadius: 12,
+                            position: 'relative',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            flexDirection: 'row'
+                        }}>
+
+                            <Text style={{
+                                ...fonts.headline1
+                            }}>{kirim.volume}
+
+
+                            </Text>
+                            <Text style={{
+                                fontFamily: fonts.secondary[600],
+                                fontSize: 20,
+                                lineHeight: 26,
+                                color: colors.primary
+                            }}> m
+
+                            </Text>
+                            <Text style={{
+                                fontFamily: fonts.secondary[600],
+                                fontSize: 15,
+                                lineHeight: 20,
+                                color: colors.primary
+                            }}>3</Text>
+
+
+                        </View>
+                    </View>
+
+                }
+
+
+
+                <MyInput label="RIT Ke" keyboardType='number-pad' placeholder="Masukan Rit Ke" value={kirim.rit} onChangeText={x => setKirim({ ...kirim, rit: x })} iconname="create" />
                 <MyGap jarak={20} />
 
                 <Text style={{
@@ -347,7 +573,25 @@ export default function Edit({ navigation, route }) {
                 </TouchableWithoutFeedback>
                 <MyGap jarak={20} />
                 {loading && <MyLoading />}
-                {!loading && <MyButton warna={colors.secondary} colorText={colors.white} iconColor={colors.white} onPress={sendServer} title="Simpan Perubahan" Icons="download-outline" />}
+                {!loading &&
+                    <View style={{
+                        flexDirection: 'row'
+                    }}>
+                        <View style={{
+                            flex: 1,
+                            paddingRight: 5,
+                        }}>
+                            <MyButton warna={colors.tertiary} colorText={colors.white} iconColor={colors.white} onPress={cekData} title="CEK" Icons="checkmark-circle-outline" />
+                        </View>
+                        <View style={{
+                            flex: 1,
+                            paddingLeft: 5,
+                        }}>
+                            <MyButton warna={colors.secondary} colorText={colors.white} iconColor={colors.white} onPress={sendServer} title="SAVE & SHARE" Icons="download-outline" />
+                        </View>
+                    </View>
+
+                }
                 <MyGap jarak={20} />
             </ScrollView>
         </SafeAreaView >

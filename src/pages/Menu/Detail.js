@@ -1,6 +1,6 @@
-import { FlatList, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { FlatList, Image, Linking, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { useIsFocused } from '@react-navigation/native';
+import { Link, useIsFocused } from '@react-navigation/native';
 import axios from 'axios';
 import { apiURL, getData } from '../../utils/localStorage';
 import { Color, colors, fonts } from '../../utils';
@@ -10,7 +10,7 @@ import moment from 'moment';
 export default function Detail({ navigation, route }) {
     const item = route.params;
 
-    const Mylist = ({ label, value, satuan = false }) => {
+    const Mylist = ({ label, value, satuan = false, nilai = '' }) => {
         return (
 
             <View style={{
@@ -36,14 +36,14 @@ export default function Detail({ navigation, route }) {
                             fontFamily: fonts.secondary[800],
                             fontSize: 14,
                             lineHeight: 26
-                        }}> cm
+                        }}> m
 
                         </Text>
                         <Text style={{
                             fontFamily: fonts.secondary[800],
                             fontSize: 12,
                             lineHeight: 20
-                        }}>3</Text>
+                        }}>{nilai}</Text>
                     </>
                 }
             </View>
@@ -70,11 +70,20 @@ export default function Detail({ navigation, route }) {
                         textAlign: 'center'
                     }}>{moment(item.tanggal).format('DD MMMM YYYY')}</Text>
 
-                    <Mylist label="Nama Supplier" value={item.nama_supplier} />
                     <Mylist label="Plat Nomor Kendaraan" value={item.plat_nomor} />
-                    <Mylist label="Volume Bak Truk Normal" satuan value={item.volume_normal} />
-                    <Mylist label="Volume Bak Truk Tambahan" satuan value={item.volume_tambahan} />
-                    <Mylist label="Jenis Material" value={item.jenis_material} />
+                    <Mylist label="Nama Supplier" value={item.nama_supplier} />
+
+                    <Mylist label="Jenis Kendaraan" value={item.jenis_kendaraan} />
+                    <Mylist label="Jenis Muatan" value={item.jenis_muatan} />
+                    <Mylist label="Panjang" satuan value={item.panjang} />
+                    <Mylist label="Lebar" satuan value={item.lebar} />
+                    <Mylist label="Tinggi" satuan value={item.tinggi} />
+                    <Mylist label="Pa" value={item.pa} />
+                    <Mylist label="Fl" value={item.fl} />
+                    <Mylist label="Volume" satuan nilai='3' value={item.volume} />
+                    <Mylist label="RIT Ke" value={item.rit} />
+
+
 
                 </View>
 
@@ -132,43 +141,9 @@ export default function Detail({ navigation, route }) {
                     paddingBottom: 10,
 
                 }}>
-                    <TouchableOpacity onPress={() => navigation.navigate('Edit', item)} style={{
-                        flex: 1,
-                        height: 50,
-                        marginLeft: 10,
-                        backgroundColor: colors.secondary,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        flexDirection: 'row',
-                        borderRadius: 50
-                    }}>
-                        <Icon type='ionicon' name='create' color={colors.white} />
-                        <Text style={{
-                            ...fonts.headline4,
-                            color: colors.white
-                        }}>Edit</Text>
-                    </TouchableOpacity>
 
 
-                    <TouchableOpacity onPress={() => Alert.alert(MYAPP, 'Apakah kamu yakin akan hapus ini ?', [
-                        { text: 'Tidak' },
-                        {
-                            text: 'Ya, Hapus',
-                            onPress: () => {
-
-                                axios.post(apiURL + 'delete_laporan', item).then(res => {
-                                    if (res.data.status == 200) {
-                                        showMessage({
-                                            type: 'success',
-                                            icon: 'success',
-                                            message: res.data.message
-                                        });
-                                        __getTransaction();
-                                    }
-                                })
-                            }
-                        }
-                    ])} style={{
+                    <TouchableOpacity onPress={() => Linking.openURL('')} style={{
                         flex: 1,
                         height: 50,
                         marginLeft: 10,
@@ -178,11 +153,11 @@ export default function Detail({ navigation, route }) {
                         flexDirection: 'row',
                         borderRadius: 50
                     }}>
-                        <Icon type='ionicon' name='trash' color={colors.white} />
+                        <Icon type='ionicon' name='share' color={colors.white} />
                         <Text style={{
                             ...fonts.headline4,
                             color: colors.white
-                        }}>Hapus</Text>
+                        }}>Share</Text>
                     </TouchableOpacity>
                 </View> */}
             </ScrollView>

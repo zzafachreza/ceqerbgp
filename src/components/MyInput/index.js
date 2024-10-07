@@ -27,7 +27,7 @@ export default function MyInput({
   multiline,
   label2,
   styleLabel,
-  colorIcon = colors.black,
+  colorIcon = Color.blueGray[300],
   rightLabel,  // Tambahkan parameter untuk label di kanan
 }) {
 
@@ -45,14 +45,14 @@ export default function MyInput({
         alignItems: 'center', // Align center agar teks sejajar vertikal
         borderWidth: 1,
         borderRadius: 12,
-        borderColor: borderColor,
+        borderColor: colorIcon,
         backgroundColor: 'white',
       }}>
         {icon && (
           <View style={{
             paddingLeft: 12,
           }}>
-            <Icon type='ionicon' name={iconname} color={Color.blueGray[300]} size={24} />
+            <Icon type='ionicon' name={iconname} color={colorIcon} size={24} />
           </View>
         )}
         <TextInput
