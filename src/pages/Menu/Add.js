@@ -32,6 +32,7 @@ export default function Add({ navigation, route }) {
 
     const [comp, setComp] = useState({});
     const [dataPlat, setDataPlat] = useState([]);
+    const [dataPlatTmp, setDataPlatTmp] = useState([]);
     const [dataSupplier, setDataSuppplier] = useState([]);
 
 
@@ -54,77 +55,177 @@ export default function Add({ navigation, route }) {
         longitude: '',
     });
 
+    const [verifikasi, setVerifikasi] = useState(false);
 
     const [cek, setCek] = useState({
         plat_nomor: 0,
         nama_supplier: 0,
         jenis_kendaraan: 0,
+        jenis_muatan: 0,
         panjang: 0,
         lebar: 0,
         tinggi: 0,
         fl: 0,
+        rit: 0,
+        foto_kendaraan: 0,
+        foto_muatan: 0
+
     })
 
     const cekData = () => {
-        console.log(kirim.plat_nomor.length)
+
+
+
         if (kirim.plat_nomor.length == 0) {
-            setCek({ ...cek, plat_nomor: 1 })
+            setCek({ ...cek, plat_nomor: 1 });
+            showMessage({
+                message: 'Data plat nomor belum sesuai',
+                icon: 'danger',
+                type: 'danger'
+            })
         } else if (cek.plat_nomor > 0) {
             setCek({ ...cek, plat_nomor: 0 })
+
         } else if (kirim.nama_supplier.length == 0) {
-            setCek({ ...cek, nama_supplier: 1 })
+            setCek({ ...cek, nama_supplier: 1 });
+            showMessage({
+                message: 'Input nama supplier belum sesuai',
+                icon: 'danger',
+                type: 'danger'
+            })
         } else if (cek.nama_supplier > 0) {
             setCek({ ...cek, nama_supplier: 0 })
+
+
         } else if (kirim.jenis_kendaraan.length == 0) {
             setCek({ ...cek, jenis_kendaraan: 1 })
+            showMessage({
+                message: 'Input jenis kendaraan belum sesuai',
+                icon: 'danger',
+                type: 'danger'
+            })
         } else if (cek.jenis_kendaraan > 0) {
             setCek({ ...cek, jenis_kendaraan: 0 })
+
+
         } else if (kirim.panjang.length == 0) {
             setCek({ ...cek, panjang: 1 })
+            showMessage({
+                message: 'Input panjang belum sesuai',
+                icon: 'danger',
+                type: 'danger'
+            })
         } else if (cek.panjang > 0) {
             setCek({ ...cek, panjang: 0 })
+
+
         } else if (kirim.lebar.length == 0) {
             setCek({ ...cek, lebar: 1 })
+            showMessage({
+                message: 'Input lebar belum sesuai',
+                icon: 'danger',
+                type: 'danger'
+            })
         } else if (cek.lebar > 0) {
             setCek({ ...cek, lebar: 0 })
+
+
         } else if (kirim.tinggi.length == 0) {
             setCek({ ...cek, tinggi: 1 })
+            showMessage({
+                message: 'Input tinggi belum sesuai',
+                icon: 'danger',
+                type: 'danger'
+            })
         } else if (cek.tinggi > 0) {
             setCek({ ...cek, tinggi: 0 })
         } else if (kirim.fl.length == 0) {
             setCek({ ...cek, fl: 1 })
+            showMessage({
+                message: 'Input fl belum sesuai',
+                icon: 'danger',
+                type: 'danger'
+            })
         } else if (cek.fl > 0) {
             setCek({ ...cek, fl: 0 })
-        } else {
-            console.log({
-                ...kirim,
-                volume: ((parseFloat(kirim.panjang) * parseFloat(kirim.lebar) * parseFloat(kirim.tinggi)) + parseFloat(kirim.pa)) + parseFloat(kirim.fl)
-            })
-            setKirim({
-                ...kirim,
-                volume: ((parseFloat(kirim.panjang) * parseFloat(kirim.lebar) * parseFloat(kirim.tinggi)) + parseFloat(kirim.pa)) + parseFloat(kirim.fl)
-            })
+        } else if (kirim.rit.length == 0) {
+            setCek({ ...cek, rit: 1 })
             showMessage({
-                message: 'Data input sudah sesuai',
-                icon: 'success',
-                type: 'success'
+                message: 'Input rit ke belum sesuai',
+                icon: 'danger',
+                type: 'danger'
             })
+        } else if (cek.rit > 0) {
+            setCek({ ...cek, rit: 0 })
+        } else if (kirim.jenis_muatan.length == 0) {
+            setCek({ ...cek, jenis_muatan: 1 })
+            showMessage({
+                message: 'Input jenis muatan belum sesuai',
+                icon: 'danger',
+                type: 'danger'
+            })
+        } else if (cek.jenis_muatan > 0) {
+            setCek({ ...cek, jenis_muatan: 0 })
+        } else if (kirim.foto_kendaraan == 'https://zavalabs.com/nogambar.jpg') {
+            setCek({ ...cek, foto_kendaraan: 1 })
+            showMessage({
+                message: 'Input foto kendaraan belum sesuai',
+                icon: 'danger',
+                type: 'danger'
+            })
+        } else if (cek.foto_kendaraan > 0) {
+            setCek({ ...cek, foto_kendaraan: 0 })
+        } else if (kirim.foto_muatan == 'https://zavalabs.com/nogambar.jpg') {
+            setCek({ ...cek, foto_muatan: 1 })
+            showMessage({
+                message: 'Input foto muatan belum sesuai',
+                icon: 'danger',
+                type: 'danger'
+            })
+        } else if (cek.foto_muatan > 0) {
+            setCek({ ...cek, foto_muatan: 0 })
+        } else {
+            if (Object.values(cek).reduce((a, b) => a + b, 0) == 0) {
+                setVerifikasi(true);
+                console.log('volme', {
+                    ...kirim,
+                    volume: (parseFloat(kirim.panjang) * parseFloat(kirim.lebar) * parseFloat(kirim.tinggi) * parseFloat(kirim.fl)) + parseFloat(kirim.pa)
+                })
+                setKirim({
+                    ...kirim,
+                    volume: (parseFloat(kirim.panjang) * parseFloat(kirim.lebar) * parseFloat(kirim.tinggi) * parseFloat(kirim.fl)) + parseFloat(kirim.pa)
+                })
+                showMessage({
+                    message: 'Data input sudah sesuai',
+                    icon: 'success',
+                    type: 'success'
+                })
+            } else {
+                showMessage({
+                    message: 'Data input belum sesuai',
+                    icon: 'danger',
+                    type: 'danger'
+                })
+            }
         }
+
+
+
+
+
+
     }
     const [loading, setLoading] = useState(false);
     const sendServer = () => {
 
         console.log(kirim)
-        if (cek.plat_nomor == 0 &&
-            cek.nama_supplier == 0 &&
-            cek.jenis_kendaraan == 0 &&
-            cek.panjang == 0 &&
-            cek.lebar == 0 &&
-            cek.tinggi == 0 &&
-            cek.fl == 0
-
-
-        ) {
+        if (!verifikasi) {
+            showMessage({
+                type: 'danger',
+                icon: 'danger',
+                message: 'Klik cek dan pastikan semua datanya sudah terinput dengan benar !'
+            })
+        } else if (Object.values(cek).reduce((a, b) => a + b, 0) == 0) {
             // setLoading(true);
 
             axios.post(apiURL + 'insert_laporan', {
@@ -144,7 +245,7 @@ export default function Add({ navigation, route }) {
                     },
                         callback => {
                             Linking.openURL('https://wa.me/' + comp.tlp + '?text=' + res.data.link)
-                            // navigation.replace('MainApp');
+                            navigation.replace('MainApp');
                             // navigation.goBack();
                         });
 
@@ -290,9 +391,9 @@ export default function Add({ navigation, route }) {
 
     const __getTransaction = () => {
         axios.post(apiURL + 'database').then(res => {
-            console.log(res.data.plat);
-            setDataPlat(res.data.plat);
-            setDataSuppplier(res.data.supplier);
+            setDataPlat(res.data);
+            setDataPlatTmp(res.data);
+
         })
     }
 
@@ -320,17 +421,34 @@ export default function Add({ navigation, route }) {
 
                 <View>
                     <MyInput colorIcon={parseFloat(cek.plat_nomor) > 0 ? colors.danger : Color.blueGray[300]} label="Plat Nomor Kendaraan" placeholder="Masukan Plat Nomor Kendaraan" value={kirim.plat_nomor} onChangeText={x => {
-                        setKirim({ ...kirim, plat_nomor: x })
+                        setKirim({ ...kirim, plat_nomor: x });
+
+                        if (x.length > 0) {
+                            let TMPSrc = dataPlat.filter(i => i.plat_nomor.toLowerCase().indexOf(x.toLowerCase()) > -1);
+                            if (TMPSrc.length > 0) {
+                                setDataPlat(TMPSrc);
+                                setBuka({
+                                    ...buka,
+                                    plat: true
+                                })
+                            }
+                        } else {
+                            setDataPlat(dataPlatTmp);
+                            setBuka({
+                                ...buka,
+                                plat: true
+                            })
+                        }
 
 
                     }
 
                     } iconname="card" />
-                    <CariData tipe='Plat' />
+                    {/* <CariData tipe='Plat' /> */}
 
 
 
-                    {buka.plat &&
+                    {kirim.plat_nomor.length > 0 && buka.plat &&
                         <View style={{
                             backgroundColor: colors.white,
                             marginTop: 10,
@@ -345,7 +463,24 @@ export default function Add({ navigation, route }) {
                             </TouchableOpacity>
                             <FlatList data={dataPlat} renderItem={({ item }) => {
                                 return (
-                                    <TouchableOpacity onPress={() => setKirim({ ...kirim, plat_nomor: item.plat_nomor })} style={{
+                                    <TouchableOpacity onPress={() => {
+
+                                        setBuka({
+                                            ...buka,
+                                            plat: false
+                                        })
+                                        setKirim({
+                                            ...kirim,
+                                            plat_nomor: item.plat_nomor,
+                                            nama_supplier: item.nama_supplier,
+                                            jenis_kendaraan: item.jenis_kendaraan,
+                                            jenis_muatan: item.jenis_muatan,
+                                            panjang: item.panjang,
+                                            lebar: item.lebar,
+                                            tinggi: item.tinggi,
+                                            rit: item.rit,
+                                        })
+                                    }} style={{
                                         padding: 10,
                                         marginBottom: 5,
                                         borderBottomWidth: 1,
@@ -362,43 +497,14 @@ export default function Add({ navigation, route }) {
                 </View>
                 <MyGap jarak={20} />
 
-                <View>
-                    <MyInput colorIcon={cek.nama_supplier > 0 ? colors.danger : Color.blueGray[300]} label="Nama Supplier" placeholder="Masukan Nama Supplier" value={kirim.nama_supplier} onChangeText={x => setKirim({ ...kirim, nama_supplier: x })} iconname="person" />
-                    <CariData tipe='Supplier' />
-                    {buka.supplier &&
-                        <View style={{
-                            backgroundColor: colors.white,
-                            marginTop: 10,
-                            borderRadius: 12,
-                            padding: 10,
-                        }}>
-                            <TouchableOpacity onPress={() => setBuka({ ...buka, supplier: false })} style={{
-                                justifyContent: 'center',
-                                alignItems: 'flex-end'
-                            }}>
-                                <Icon type='ionicon' name='close-circle' size={30} />
-                            </TouchableOpacity>
-                            <FlatList data={dataSupplier} renderItem={({ item }) => {
-                                return (
-                                    <TouchableOpacity onPress={() => setKirim({ ...kirim, nama_supplier: item.nama_supplier })} style={{
-                                        padding: 10,
-                                        marginBottom: 5,
-                                        borderBottomWidth: 1,
-                                        borderBottomColor: Color.blueGray[300]
-                                    }}>
-                                        <Text style={{
-                                            ...fonts.headline4
-                                        }}>{item.nama_supplier}</Text>
-                                    </TouchableOpacity>
-                                )
-                            }} />
-                        </View>
-                    }
-                </View>
+
+                <MyInput colorIcon={cek.nama_supplier > 0 ? colors.danger : Color.blueGray[300]} label="Nama Supplier" placeholder="Masukan Nama Supplier" value={kirim.nama_supplier} onChangeText={x => setKirim({ ...kirim, nama_supplier: x })} iconname="person" />
+
+
                 <MyGap jarak={20} />
                 <MyInput colorIcon={cek.jenis_kendaraan > 0 ? colors.danger : Color.blueGray[300]} label="Jenis Kendaraan" placeholder="Masukan Jenis Kendaraan" value={kirim.jenis_kendaraan} onChangeText={x => setKirim({ ...kirim, jenis_kendaraan: x })} iconname="hardware-chip-outline" />
                 <MyGap jarak={20} />
-                <MyInput label="Jenis Muatan" placeholder="Masukan Jenis Muatan" value={kirim.jenis_muatan} onChangeText={x => setKirim({ ...kirim, jenis_muatan: x })} iconname="server" />
+                <MyInput colorIcon={parseFloat(cek.jenis_muatan) > 0 ? colors.danger : Color.blueGray[300]} label="Jenis Muatan" placeholder="Masukan Jenis Muatan" value={kirim.jenis_muatan} onChangeText={x => setKirim({ ...kirim, jenis_muatan: x })} iconname="server" />
                 <MyGap jarak={20} />
 
 
@@ -474,14 +580,15 @@ export default function Add({ navigation, route }) {
 
 
 
-                <MyInput label="RIT Ke" keyboardType='number-pad' placeholder="Masukan Rit Ke" value={kirim.rit} onChangeText={x => setKirim({ ...kirim, rit: x })} iconname="create" />
+                <MyInput colorIcon={parseFloat(cek.rit) > 0 ? colors.danger : Color.blueGray[300]} label="RIT Ke" keyboardType='number-pad' placeholder="Masukan Rit Ke" value={kirim.rit} onChangeText={x => setKirim({ ...kirim, rit: x })} iconname="create" />
                 <MyGap jarak={20} />
 
 
                 <Text style={{
                     ...fonts.body3,
-                    color: colors.white,
+                    color: parseFloat(cek.foto_kendaraan) > 0 ? colors.danger : colors.white,
                     marginBottom: 10,
+
                 }}>Upload Foto Kendaraan</Text>
                 <TouchableWithoutFeedback
 
@@ -501,10 +608,12 @@ export default function Add({ navigation, route }) {
                                 }, response => {
                                     // console.log('All Response = ', response);
 
-                                    setKirim({
-                                        ...kirim,
-                                        foto_kendaraan: `data:${response.assets[0].type};base64, ${response.assets[0].base64}`,
-                                    });
+                                    if (!response.didCancel) {
+                                        setKirim({
+                                            ...kirim,
+                                            foto_kendaraan: `data:${response.assets[0].type};base64, ${response.assets[0].base64}`,
+                                        });
+                                    }
                                 });
                             }
                         },
@@ -519,11 +628,13 @@ export default function Add({ navigation, route }) {
                                     maxHeight: 1000
                                 }, response => {
                                     // console.log('All Response = ', response);
+                                    if (!response.didCancel) {
+                                        setKirim({
+                                            ...kirim,
+                                            foto_kendaraan: `data:${response.assets[0].type};base64, ${response.assets[0].base64}`,
+                                        });
+                                    }
 
-                                    setKirim({
-                                        ...kirim,
-                                        foto_kendaraan: `data:${response.assets[0].type};base64, ${response.assets[0].base64}`,
-                                    });
                                 });
                             }
                         }
@@ -550,7 +661,7 @@ export default function Add({ navigation, route }) {
 
                 <Text style={{
                     ...fonts.body3,
-                    color: colors.white,
+                    color: parseFloat(cek.foto_muatan) > 0 ? colors.danger : colors.white,
                     marginBottom: 10,
                 }}>Upload Foto Pengukuran/Muatan</Text>
                 <TouchableWithoutFeedback
@@ -570,11 +681,13 @@ export default function Add({ navigation, route }) {
                                     maxHeight: 1000
                                 }, response => {
                                     // console.log('All Response = ', response);
+                                    if (!response.didCancel) {
+                                        setKirim({
+                                            ...kirim,
+                                            foto_muatan: `data:${response.assets[0].type};base64, ${response.assets[0].base64}`,
+                                        });
+                                    }
 
-                                    setKirim({
-                                        ...kirim,
-                                        foto_muatan: `data:${response.assets[0].type};base64, ${response.assets[0].base64}`,
-                                    });
                                 });
                             }
                         },
@@ -589,11 +702,13 @@ export default function Add({ navigation, route }) {
                                     maxHeight: 1000
                                 }, response => {
                                     // console.log('All Response = ', response);
+                                    if (!response.didCancel) {
+                                        setKirim({
+                                            ...kirim,
+                                            foto_muatan: `data:${response.assets[0].type};base64, ${response.assets[0].base64}`,
+                                        });
+                                    }
 
-                                    setKirim({
-                                        ...kirim,
-                                        foto_muatan: `data:${response.assets[0].type};base64, ${response.assets[0].base64}`,
-                                    });
                                 });
                             }
                         }
