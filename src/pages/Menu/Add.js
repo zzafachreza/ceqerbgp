@@ -216,6 +216,7 @@ export default function Add({ navigation, route }) {
 
     }
     const [loading, setLoading] = useState(false);
+    const [kunci, setKunci] = useState(false);
     const sendServer = () => {
 
         console.log(kirim)
@@ -230,7 +231,7 @@ export default function Add({ navigation, route }) {
 
             axios.post(apiURL + 'insert_laporan', {
                 ...kirim,
-                volume: ((parseFloat(kirim.panjang) * parseFloat(kirim.lebar) * parseFloat(kirim.tinggi)) + parseFloat(kirim.pa)) + parseFloat(kirim.fl)
+                volume: (parseFloat(kirim.panjang) * parseFloat(kirim.lebar) * parseFloat(kirim.tinggi) * parseFloat(kirim.fl)) + parseFloat(kirim.pa)
             }).then(res => {
                 console.log(res.data)
 
@@ -433,6 +434,7 @@ export default function Add({ navigation, route }) {
                                 })
                             }
                         } else {
+                            setKunci(false);
                             setDataPlat(dataPlatTmp);
                             setBuka({
                                 ...buka,
@@ -464,7 +466,7 @@ export default function Add({ navigation, route }) {
                             <FlatList data={dataPlat} renderItem={({ item }) => {
                                 return (
                                     <TouchableOpacity onPress={() => {
-
+                                        setKunci(true);
                                         setBuka({
                                             ...buka,
                                             plat: false
@@ -502,7 +504,23 @@ export default function Add({ navigation, route }) {
 
 
                 <MyGap jarak={20} />
-                <MyInput colorIcon={cek.jenis_kendaraan > 0 ? colors.danger : Color.blueGray[300]} label="Jenis Kendaraan" placeholder="Masukan Jenis Kendaraan" value={kirim.jenis_kendaraan} onChangeText={x => setKirim({ ...kirim, jenis_kendaraan: x })} iconname="hardware-chip-outline" />
+                {!kunci && <MyInput colorIcon={cek.jenis_kendaraan > 0 ? colors.danger : Color.blueGray[300]} label="Jenis Kendaraan" placeholder="Masukan Jenis Kendaraan" value={kirim.jenis_kendaraan} onChangeText={x => setKirim({ ...kirim, jenis_kendaraan: x })} iconname="hardware-chip-outline" />}
+                {kunci &&
+                    <View style={{
+                        marginBottom: 0,
+                    }}>
+                        <Text style={{
+                            ...fonts.body3,
+                            color: colors.white,
+                            marginBottom: 5,
+                        }}>Jenis Kendaraan</Text>
+                        <View>
+                            <Text style={{
+                                ...fonts.headline3,
+                                color: colors.white
+                            }}>{kirim.jenis_kendaraan}</Text>
+                        </View>
+                    </View>}
                 <MyGap jarak={20} />
                 <MyInput colorIcon={parseFloat(cek.jenis_muatan) > 0 ? colors.danger : Color.blueGray[300]} label="Jenis Muatan" placeholder="Masukan Jenis Muatan" value={kirim.jenis_muatan} onChangeText={x => setKirim({ ...kirim, jenis_muatan: x })} iconname="server" />
                 <MyGap jarak={20} />

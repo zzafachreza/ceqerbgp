@@ -29,7 +29,7 @@ import GetLocation from 'react-native-get-location'
 import { showMessage } from 'react-native-flash-message';
 
 export default function Edit({ navigation, route }) {
-
+    const [kunci, setKunci] = useState(false);
     // console.log(route.params)
 
     const [comp, setComp] = useState({});
@@ -219,7 +219,7 @@ export default function Edit({ navigation, route }) {
 
             axios.post(apiURL + 'update_laporan', {
                 ...kirim,
-                volume: ((parseFloat(kirim.panjang) * parseFloat(kirim.lebar) * parseFloat(kirim.tinggi)) + parseFloat(kirim.pa)) + parseFloat(kirim.fl)
+                volume: (parseFloat(kirim.panjang) * parseFloat(kirim.lebar) * parseFloat(kirim.tinggi) * parseFloat(kirim.fl)) + parseFloat(kirim.pa)
             }).then(res => {
                 console.log(res.data)
 
@@ -493,7 +493,21 @@ export default function Edit({ navigation, route }) {
 
 
                 <MyGap jarak={20} />
-                <MyInput colorIcon={cek.jenis_kendaraan > 0 ? colors.danger : Color.blueGray[300]} label="Jenis Kendaraan" placeholder="Masukan Jenis Kendaraan" value={kirim.jenis_kendaraan} onChangeText={x => setKirim({ ...kirim, jenis_kendaraan: x })} iconname="hardware-chip-outline" />
+                <View style={{
+                    marginBottom: 0,
+                }}>
+                    <Text style={{
+                        ...fonts.body3,
+                        color: colors.white,
+                        marginBottom: 5,
+                    }}>Jenis Kendaraan</Text>
+                    <View>
+                        <Text style={{
+                            ...fonts.headline3,
+                            color: colors.white
+                        }}>{kirim.jenis_kendaraan}</Text>
+                    </View>
+                </View>
                 <MyGap jarak={20} />
                 <MyInput colorIcon={parseFloat(cek.jenis_muatan) > 0 ? colors.danger : Color.blueGray[300]} label="Jenis Muatan" placeholder="Masukan Jenis Muatan" value={kirim.jenis_muatan} onChangeText={x => setKirim({ ...kirim, jenis_muatan: x })} iconname="server" />
                 <MyGap jarak={20} />
