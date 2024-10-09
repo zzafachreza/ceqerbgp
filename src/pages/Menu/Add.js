@@ -466,7 +466,7 @@ export default function Add({ navigation, route }) {
                             <FlatList data={dataPlat} renderItem={({ item }) => {
                                 return (
                                     <TouchableOpacity onPress={() => {
-                                        setKunci(true);
+                                        setKunci(item.cek > 0 ? true : false);
                                         setBuka({
                                             ...buka,
                                             plat: false
