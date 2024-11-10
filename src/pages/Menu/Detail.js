@@ -80,7 +80,7 @@ export default function Detail({ navigation, route }) {
                     <Mylist label="Tinggi" satuan value={item.tinggi} />
                     <Mylist label="Pa" value={item.pa} />
                     <Mylist label="Fl" value={item.fl} />
-                    <Mylist label="Volume" satuan nilai='3' value={item.volume} />
+                    <Mylist label="Volume" satuan nilai='3' value={parseFloat(item.volume).toFixed(2)} />
                     <Mylist label="RIT Ke" value={item.rit} />
 
 

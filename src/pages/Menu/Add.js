@@ -34,6 +34,9 @@ export default function Add({ navigation, route }) {
     const [dataPlat, setDataPlat] = useState([]);
     const [dataPlatTmp, setDataPlatTmp] = useState([]);
     const [dataSupplier, setDataSuppplier] = useState([]);
+    const [dataSupplierTmp, setDataSuppplierTmp] = useState([]);
+    const [jenis, setJenis] = useState([]);
+    const [jenisTmp, setJenisTmp] = useState([]);
 
 
     const [kirim, setKirim] = useState({
@@ -189,11 +192,11 @@ export default function Add({ navigation, route }) {
                 setVerifikasi(true);
                 console.log('volme', {
                     ...kirim,
-                    volume: (parseFloat(kirim.panjang) * parseFloat(kirim.lebar) * parseFloat(kirim.tinggi) * parseFloat(kirim.fl)) + parseFloat(kirim.pa)
+                    volume: (parseFloat(kirim.panjang) * parseFloat(kirim.lebar) * parseFloat(kirim.tinggi)) * (parseFloat(kirim.fl) + parseFloat(kirim.pa))
                 })
                 setKirim({
                     ...kirim,
-                    volume: (parseFloat(kirim.panjang) * parseFloat(kirim.lebar) * parseFloat(kirim.tinggi) * parseFloat(kirim.fl)) + parseFloat(kirim.pa)
+                    volume: (parseFloat(kirim.panjang) * parseFloat(kirim.lebar) * parseFloat(kirim.tinggi)) * (parseFloat(kirim.fl) + parseFloat(kirim.pa))
                 })
                 showMessage({
                     message: 'Data input sudah sesuai',
@@ -315,7 +318,8 @@ export default function Add({ navigation, route }) {
 
     const [buka, setBuka] = useState({
         plat: false,
-        supplier: false
+        supplier: false,
+        jenis_kendaraan: false,
     })
 
     const CariData = ({ tipe = 'Plat' }) => {
@@ -395,6 +399,12 @@ export default function Add({ navigation, route }) {
             setDataPlat(res.data);
             setDataPlatTmp(res.data);
 
+        })
+
+        axios.post(apiURL + 'supplier').then(res => {
+            console.log(res.data);
+            setDataSuppplier(res.data);
+            setDataSuppplierTmp(res.data);
         })
     }
 
@@ -500,11 +510,140 @@ export default function Add({ navigation, route }) {
                 <MyGap jarak={20} />
 
 
-                <MyInput colorIcon={cek.nama_supplier > 0 ? colors.danger : Color.blueGray[300]} label="Nama Supplier" placeholder="Masukan Nama Supplier" value={kirim.nama_supplier} onChangeText={x => setKirim({ ...kirim, nama_supplier: x })} iconname="person" />
+                <MyInput colorIcon={cek.nama_supplier > 0 ? colors.danger : Color.blueGray[300]} label="Nama Supplier" placeholder="Masukan Nama Supplier" value={kirim.nama_supplier} onChangeText={x => {
+                    setKirim({ ...kirim, nama_supplier: x });
+                    if (x.length > 0) {
+                        let TMPSrc = dataSupplier.filter(i => i.nama_supplier.toLowerCase().indexOf(x.toLowerCase()) > -1);
+                        if (TMPSrc.length > 0) {
+                            setDataSuppplier(TMPSrc);
+                            setBuka({
+                                ...buka,
+                                supplier: true
+                            })
+                        }
+                    } else {
+                        setDataSuppplier(dataSupplierTmp);
+                        setBuka({
+                            ...buka,
+                            supplier: true
+                        })
+                    }
+
+                }} iconname="person" />
+
+                {kirim.nama_supplier.length > 0 && buka.supplier &&
+                    <View style={{
+                        backgroundColor: colors.white,
+                        marginTop: 10,
+                        borderRadius: 12,
+                        padding: 10,
+                    }}>
+                        <TouchableOpacity onPress={() => setBuka({ ...buka, supplier: false })} style={{
+                            justifyContent: 'center',
+                            alignItems: 'flex-end'
+                        }}>
+                            <Icon type='ionicon' name='close-circle' size={30} />
+                        </TouchableOpacity>
+                        <FlatList data={dataSupplier} renderItem={({ item }) => {
+                            return (
+                                <TouchableOpacity onPress={() => {
+
+                                    setBuka({
+                                        ...buka,
+                                        supplier: false
+                                    })
+                                    setKirim({
+                                        ...kirim,
+                                        nama_supplier: item.nama_supplier
+                                    })
+                                }} style={{
+                                    padding: 10,
+                                    marginBottom: 5,
+                                    borderBottomWidth: 1,
+                                    borderBottomColor: Color.blueGray[300]
+                                }}>
+                                    <Text style={{
+                                        ...fonts.headline4
+                                    }}>{item.nama_supplier}</Text>
+                                </TouchableOpacity>
+                            )
+                        }} />
+                    </View>
+                }
 
 
                 <MyGap jarak={20} />
-                {!kunci && <MyInput colorIcon={cek.jenis_kendaraan > 0 ? colors.danger : Color.blueGray[300]} label="Jenis Kendaraan" placeholder="Masukan Jenis Kendaraan" value={kirim.jenis_kendaraan} onChangeText={x => setKirim({ ...kirim, jenis_kendaraan: x })} iconname="hardware-chip-outline" />}
+
+                <MyInput colorIcon={cek.jenis_kendaraan > 0 ? colors.danger : Color.blueGray[300]} label="Jenis Kendaraan" placeholder="Masukan Jenis Kendaraan" value={kirim.jenis_kendaraan} onChangeText={x => {
+                    setKirim({ ...kirim, jenis_kendaraan: x });
+
+                    if (x.length > 0) {
+                        let TMPSrc = dataPlat.filter(i => i.jenis_kendaraan.toLowerCase().indexOf(x.toLowerCase()) > -1);
+                        if (TMPSrc.length > 0) {
+                            setDataPlat(TMPSrc);
+                            setBuka({
+                                ...buka,
+                                jenis_kendaraan: true
+                            })
+                        }
+                    } else {
+
+                        setDataPlat(dataPlatTmp);
+                        setBuka({
+                            ...buka,
+                            jenis_kendaraan: true
+                        })
+                    }
+
+                }} iconname="hardware-chip-outline" />
+                {kirim.jenis_kendaraan.length > 0 && buka.jenis_kendaraan &&
+                    <View style={{
+                        backgroundColor: colors.white,
+                        marginTop: 10,
+                        borderRadius: 12,
+                        padding: 10,
+                    }}>
+                        <TouchableOpacity onPress={() => setBuka({ ...buka, plat: false })} style={{
+                            justifyContent: 'center',
+                            alignItems: 'flex-end'
+                        }}>
+                            <Icon type='ionicon' name='close-circle' size={30} />
+                        </TouchableOpacity>
+                        <FlatList data={dataPlat} renderItem={({ item }) => {
+                            return (
+                                <TouchableOpacity onPress={() => {
+                                    setKunci(item.cek > 0 ? true : false);
+                                    setBuka({
+                                        ...buka,
+                                        jenis_kendaraan: false
+                                    })
+                                    setKirim({
+                                        ...kirim,
+                                        plat_nomor: item.plat_nomor,
+                                        nama_supplier: item.nama_supplier,
+                                        jenis_kendaraan: item.jenis_kendaraan,
+                                        jenis_muatan: item.jenis_muatan,
+                                        panjang: item.panjang,
+                                        lebar: item.lebar,
+                                        tinggi: item.tinggi,
+                                        rit: item.rit,
+                                    })
+                                }} style={{
+                                    padding: 10,
+                                    marginBottom: 5,
+                                    borderBottomWidth: 1,
+                                    borderBottomColor: Color.blueGray[300]
+                                }}>
+                                    <Text style={{
+                                        ...fonts.headline4
+                                    }}>{item.jenis_kendaraan} ( {item.plat_nomor} )</Text>
+                                </TouchableOpacity>
+                            )
+                        }} />
+                    </View>
+                }
+
+                {/* {!kunci && <MyInput colorIcon={cek.jenis_kendaraan > 0 ? colors.danger : Color.blueGray[300]} label="Jenis Kendaraan" placeholder="Masukan Jenis Kendaraan" value={kirim.jenis_kendaraan} onChangeText={x => setKirim({ ...kirim, jenis_kendaraan: x })} iconname="hardware-chip-outline" />}
                 {kunci &&
                     <View style={{
                         marginBottom: 0,
@@ -520,7 +659,7 @@ export default function Add({ navigation, route }) {
                                 color: colors.white
                             }}>{kirim.jenis_kendaraan}</Text>
                         </View>
-                    </View>}
+                    </View>} */}
                 <MyGap jarak={20} />
                 <MyInput colorIcon={parseFloat(cek.jenis_muatan) > 0 ? colors.danger : Color.blueGray[300]} label="Jenis Muatan" placeholder="Masukan Jenis Muatan" value={kirim.jenis_muatan} onChangeText={x => setKirim({ ...kirim, jenis_muatan: x })} iconname="server" />
                 <MyGap jarak={20} />
@@ -571,7 +710,7 @@ export default function Add({ navigation, route }) {
 
                             <Text style={{
                                 ...fonts.headline1
-                            }}>{kirim.volume}
+                            }}>{parseFloat(kirim.volume).toFixed(2)}
 
 
                             </Text>
