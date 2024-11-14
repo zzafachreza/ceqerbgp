@@ -178,11 +178,11 @@ export default function Edit({ navigation, route }) {
                 setVerifikasi(true);
                 console.log('volme', {
                     ...kirim,
-                    volume: (parseFloat(kirim.panjang) * parseFloat(kirim.lebar) * parseFloat(kirim.tinggi) * parseFloat(kirim.fl)) + parseFloat(kirim.pa)
+                    volume: (parseFloat(kirim.panjang) * parseFloat(kirim.lebar) * (parseFloat(kirim.tinggi) + parseFloat(kirim.fl)))
                 })
                 setKirim({
                     ...kirim,
-                    volume: (parseFloat(kirim.panjang) * parseFloat(kirim.lebar) * parseFloat(kirim.tinggi) * parseFloat(kirim.fl)) + parseFloat(kirim.pa)
+                    volume: (parseFloat(kirim.panjang) * parseFloat(kirim.lebar) * (parseFloat(kirim.tinggi) + parseFloat(kirim.fl)))
                 })
                 showMessage({
                     message: 'Data input sudah sesuai',
@@ -219,7 +219,7 @@ export default function Edit({ navigation, route }) {
 
             axios.post(apiURL + 'update_laporan', {
                 ...kirim,
-                volume: (parseFloat(kirim.panjang) * parseFloat(kirim.lebar) * parseFloat(kirim.tinggi) * parseFloat(kirim.fl)) + parseFloat(kirim.pa)
+                volume: (parseFloat(kirim.panjang) * parseFloat(kirim.lebar) * (parseFloat(kirim.tinggi) + parseFloat(kirim.fl)))
             }).then(res => {
                 console.log(res.data)
 
